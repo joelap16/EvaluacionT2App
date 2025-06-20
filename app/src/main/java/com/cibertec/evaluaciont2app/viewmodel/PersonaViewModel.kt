@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PersonaViewModel (application: Application) : AndroidViewModel(application){
@@ -30,28 +31,35 @@ class PersonaViewModel (application: Application) : AndroidViewModel(application
     init {
         viewModelScope.launch {
             _currentQuery.collectLatest { query ->
-                personaRepository.searchPersonas(query).collectLatest { personaList ->
+                personaRepository.findPersonas(query).collectLatest { personaList ->
                     _personas.value = personaList
-                    _personaCount.value = personaList.size
-                    if (query.isNotEmpty()) {
-                        _snackbarMessage.value = "Mostrando ${personaList.size} registros."
-                    } else {
-                        _snackbarMessage.value = "Total de ${personaList.size} registros."
-                    }
                 }
             }
+        }
+
+        viewModelScope.launch {
+            personaRepository.getAllPersonas()
+                .map { it.size }
+                .collectLatest { count ->
+                    _personaCount.value = count
+                    if (_currentQuery.value.isEmpty()) {
+                        _snackbarMessage.value = "Total de $count registros."
+                    }
+                }
         }
     }
 
     fun insertPersona(persona: Persona) {
         viewModelScope.launch {
             personaRepository.insertPersona(persona)
+            _snackbarMessage.value = "Persona registrada con éxito."
         }
     }
 
     fun updatePersona(persona: Persona) {
         viewModelScope.launch {
             personaRepository.updatePersona(persona)
+            _snackbarMessage.value = "Persona actualizada con éxito."
         }
     }
 

@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.Flow
 class PersonaRepository (private val context: Context) {
     private val personaDao = DatabaseProvider.getDatabase(context).personaDao()
 
-    suspend fun getAllPersonas(): Flow<List<Persona>>{
+    fun getAllPersonas(): Flow<List<Persona>>{
         return personaDao.getAllPersonas()
     }
 
-    suspend fun searchPersonas(query: String): Flow<List<Persona>> {
+    fun findPersonas(query: String): Flow<List<Persona>> {
         return personaDao.findPersonas(query)
     }
 

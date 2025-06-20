@@ -25,9 +25,10 @@ interface PersonaDao {
     suspend fun getPersonaById(id: Int): Persona?
 
     @Query("SELECT * FROM tbl_persona")
-    suspend fun getAllPersonas(): Flow<List<Persona>>
+    fun getAllPersonas(): Flow<List<Persona>>
 
-    @Query("SELECT * FROM tbl_persona WHERE nombres LIKE :query OR apellidos LIKE :query or numero_dni LIKE :query")
-    suspend fun findPersonas(query: String): Flow<List<Persona>>
+    @Query("SELECT * FROM tbl_persona WHERE " +
+            "(:query IS NULL OR :query = '' OR nombres LIKE '%' || :query || '%' OR apellidos LIKE '%' || :query || '%' OR numero_dni LIKE '%' || :query || '%')")
+    fun findPersonas(query: String): Flow<List<Persona>>
 
 }
