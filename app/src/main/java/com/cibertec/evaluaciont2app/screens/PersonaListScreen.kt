@@ -151,7 +151,7 @@ fun PersonaListScreen(
                     items(personas, key = { it.id }) { persona ->
                         PersonaListItem(
                             persona = persona,
-                            onViewClick = { /* No hay pantalla de detalles, solo los iconos */ },
+                            onViewClick = {  },
                             onEditClick = { onNavigateToForm(persona.id) },
                             onDeleteClick = { personaViewModel.deletePersona(persona) }
                         )
